@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEAUTY APP</title>
+    <link rel="stylesheet" href = "/css/style.css">
+    <script src="/send_url.js"></script>
+    <link rel="stylesheet" href="responsive.css">
+    
+  </head>
+  <body>
+    <%- include('header'); %>
+    <div class="top-wrapper">
+      <div class="top-detail">
+        <h2 class="subtitle">Body makeかんたん日記</h2>
+        <h1 class="title">BEAUTY APP</h1>
+        <p class="description">
+          BEAUTY APPは、ウェブ版のお食事ノートです
+          <br>
+          本日クリアしたBeautyミッションを記録しましょう！
+        </p>
+        <% if (locals.isLoggedIn) {%>
+          <a class="index-button" href="/index">記録をする</a>
+          <% } else {%>
+          <li><a href="/login">ログイン</a></li>
+          <li><a href="/signup">新規登録</a></li>
+          <% } %>
+      </div>
+      <div class="top-image">
+        <img src = "/images/make.jpg">
+      </div>
+    </div>
+
+    <footer>
+      <% if (locals.staffLoggedIn) { %>
+        <a href="/stafflogout">ログアウト</a>
+        <a href="/index">ミッション一覧</a>
+      <% } else { %>
+        <a href="/stafflogin">スタッフはこちら</a>
+      <% } %>
+    </footer>
+  </body>
+  
+</html>
