@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>BEAUTY APP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/send_url.js"></script>
+  </head>
+  <body>
+    <%- include('header'); %>
+    <div class="sign">
+      <div class="container">
+        <h1><a href="/">BEAUTY APP</a></h1>
+        <div class="panel">
+          <h2>新規登録</h2>
+          <% if (errors.length > 0) { %>
+            <ul class="errors">
+              
+              <% errors.forEach(error => {%>
+                <li><%= error %></li>
+              <% }); %>
+            </ul>
+          <% } %>
+          <form action="/signup" method="post">
+            <p>ニックネーム</p>
+            <input type="text" name="nickname">
+            <p>フルネーム</p>
+            <input type="text" name="fullname">
+            <p>パスワード</p>
+            <input type="password" name="password">
+            <input type="submit" value="登録する">
+            <a href="/">Topに戻る</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

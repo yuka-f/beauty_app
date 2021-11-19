@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>BEAUTY APP</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/send_url.js"></script>
+  </head>
+  <body>
+    <%- include('header'); %>
+    <div class="container">
+      <div class="container-header">
+      <% if(locals.isLoggedIn){ %>
+        <h1>Beauty みっしょん</h1>
+      </div>
+      <div class="item-form-wrapper">
+        <p class="form-label">TODAYSこんぷりーと</p>
+        <% if (errors.length > 0) { %>
+          <ul class="errors">
+            
+            <% errors.forEach(error => {%>
+              <li><%= error %></li>
+            <% }); %>
+          </ul>
+        <% } %>
+        <form action = "/create" method = "post">
+            <input type="text" name="itemName">
+            <input type="submit" value="作成する">
+        </form>
+      </div>
+      <% } else { %>
+      <div class="container-login">
+        <div class="login">
+            <p>ログインしましょう！</p>
+            <!-- <img src="/images/login.jpeg"> -->
+            <a class="btn" href="/signup">新規登録</a>
+            <a class="btn" href="login">login</a>
+        </div>
+        <a href="/index" class="cancel-button">もどる</a>
+      </div>
+      <% } %>
+      
+    </div>
+  </body>
+</html>

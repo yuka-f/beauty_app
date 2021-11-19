@@ -1,0 +1,23 @@
+/* タブレット向けレイアウト
+
+@media (min-width:610px) {
+    header {
+      width:100%;
+      display: none;
+   }
+
+    body {
+      width:100%;
+    }
+}
+
+@media (max-width:610px) {
+  header {
+    width:100%;
+    position: fixed;
+  }
+
+  body {
+    width:100%;
+  }
+} */
