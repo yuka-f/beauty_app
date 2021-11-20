@@ -10,9 +10,9 @@ app.use(express.urlencoded({extended: false}));
 
 const connection = mysql.createConnection({
   host: 'localhost',
-  user: '***',
-  password: 'sql***',
-  database: '****'
+  user: '',
+  password: '',
+  database: ''
 });
 
 app.use(
@@ -79,18 +79,21 @@ app.post('/stafflogin',(req,res) => {
     [staffnick],
     (error, results) => {
       if(results.length > 0){
-        if(req.body.staffpass === results[0].password){
-          req.session.staffId =results[0].id;
-          res.redirect('/index');
-        }else{
-          
-          res.redirect('/stafflogin');
-        }
+        const plain = req.body.staffpass;
+        const hash = results[0].password;
+        bcrypt.compare(plain,hash,(error,isEqual)=>{
+          if(isEqual){
+            req.session.staffId = results[0].id;
+            req.session.staffname = results[0].staffname;
+            res.redirect('/index');
+          }else{
+            
+            res.redirect('/stafflogin');
+          }
+        });
       }else{
         res.redirect('/stafflogin');
       }
-
-      // res.redirect('/stafflogin');
     }
   );
 });
@@ -102,7 +105,8 @@ app.get('/staffsign',(req,res) => {
 // ---ユーザー登録処理---
 app.post('/staffsign',
   (req,res,next) => {
-    console.log('ちぇっく');
+    // 入力空チェック
+    console.log('空入力チェック');
     const staffnick = req.body.staffnick;
     const staffname = req.body.staffname;
     const staffpass = req.body.staffpass;
@@ -125,22 +129,43 @@ app.post('/staffsign',
       next();
     }
   },
+  (req,res,next) => {
+    console.log('にっくネーム重複チェック');
+    const staffnick = req.body.staffnick;
+    const errors = [];
+
+    connection.query(
+      'SELECT * FROM staff WHERE nickname = ?',
+      [staffnick],
+      (error,results) => {
+        if(results.length > 0) {
+          errors.push('登録失敗');
+          res.render('staffsign.ejs',{errors:errors});
+        }else{
+          next();
+        }
+      }
+    )
+  },
   (req,res) => {
-    console.log('ユーザー登録')
+    console.log('ユーザー登録');
+    // ユーザー登録
     // ---ejsで受け取った値を定数に代入
     const staffnick = req.body.staffnick;
     const staffname = req.body.staffname;
     const staffpass = req.body.staffpass;
     // ---staffテーブルにデータ登録
-    connection.query(
-      'INSERT INTO staff (nickname, staffname, password) VALUES (?, ?, ?)',
-      [staffnick, staffname, staffpass],
-      (error, results) => {
-        req.session.staffId = results.insertId;
-        req.session.staffnick = staffnick;
-        res.redirect('/index');
-      }
-    );
+    bcrypt.hash(staffpass,10,(error,hash) =>{
+      connection.query(
+        'INSERT INTO staff (nickname, staffname, password) VALUES (?, ?, ?)',
+        [staffnick, staffname, hash],
+        (error, results) => {
+          req.session.staffId = results.insertId;
+          req.session.staffnick = staffnick;
+          res.redirect('/index');
+        }
+      );
+    });
   }
 );
 
@@ -155,7 +180,7 @@ app.get('/signup',(req,res) => {
 // ---ユーザー登録処理---
 app.post('/signup',
   (req, res, next) => {
-    console.log('入力値の空チェック');
+    // 入力値の空チェック
     const username = req.body.nickname;
     const fullname = req.body.fullname;
     const password = req.body.password;
@@ -179,7 +204,7 @@ app.post('/signup',
     }
   },
   (req,res,next) => {
-    console.log('ニックネーム重複チェック');
+    // ニックネーム重複チェック
     const username = req.body.nickname;
     const errors = [];
 
@@ -189,8 +214,6 @@ app.post('/signup',
       (error, results) => {
         if (results.length > 0) {
           errors.push('ユーザー登録に失敗しました');
-          
-          
           res.render('signup.ejs',{errors:errors});
         } else {
             next();
@@ -199,7 +222,7 @@ app.post('/signup',
     );
   },
   (req,res) =>{
-      console.log('ユーザー登録');
+      // ユーザー登録
       const username = req.body.nickname;
       const fullname = req.body.fullname;
       const password = req.body.password;
@@ -219,18 +242,18 @@ app.post('/signup',
     }
 );
 
+// ＠---------ログイン-------------＠
+// ---ルーティング---
 app.get('/login',(req,res) => {
   res.render('login.ejs');
 })
-
+// ---ユーザー認証処理---
 app.post('/login',(req,res) => {
   const nickname = req.body.nickname;
-
   connection.query(
     'SELECT * FROM users WHERE username = ?',
     [nickname],
     (error, results) => {
-      
       if(results.length > 0){
         const plain = req.body.password;
         const hash = results[0].password;
