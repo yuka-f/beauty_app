@@ -22,6 +22,7 @@ app.use(
     saveUninitialized: false,
   })
 )
+
 // =========お客様ログイン確認=======================================
 app.use((req,res,next) => {
   if (req.session.userId === undefined) {
