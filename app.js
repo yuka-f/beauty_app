@@ -10,9 +10,9 @@ app.use(express.urlencoded({extended: false}));
 
 const connection = mysql.createConnection({
   host: 'localhost',
-  user: '',
-  password: '',
-  database: ''
+  user: 'root',
+  password: 'sqlbaby171819',
+  database: 'beauty_app'
 });
 
 app.use(
